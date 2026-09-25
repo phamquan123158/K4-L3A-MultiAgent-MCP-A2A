@@ -95,6 +95,11 @@ def main() -> None:
         elif args.command == "package":
             destination = package_submission(root, root / args.output)
             print(f"OK: {destination}")
+    except BaseExceptionGroup as exc:  # Python 3.11 exception groups from external tooling
+        details = "; ".join(str(item) for item in exc.exceptions[:3])
+        message = details if details else str(exc)
+        print(f"ERROR: {message}", file=sys.stderr)
+        raise SystemExit(1) from exc
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc
